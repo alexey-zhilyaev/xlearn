@@ -42,7 +42,9 @@ Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict(JNI
                                                                              jstring jmodel,
                                                                              jintArray tasks, jintArray keys,
                                                                              jintArray values, jint jtopSize,
-                                                                             jstring joutput) {
+                                                                             jstring joutput,
+                                                                             jboolean isQuiet) {
+    if (isQuiet) std::cout.setstate(std::ios_base::failbit);
     Timer timer;
     timer.tic();
     Color::print_action("Reading input parameters ...");
@@ -109,5 +111,6 @@ Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict(JNI
     (env)->ReleaseIntArrayElements(tasks, taskArray, 0);
     (env)->ReleaseIntArrayElements(keys, keysArray, 0);
     (env)->ReleaseIntArrayElements(values, valuesArray, 0);
+    if (isQuiet) std::cout.clear();
     return out;
 }

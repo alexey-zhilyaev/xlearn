@@ -18,10 +18,10 @@ JNIEXPORT void JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLe
 /*
  * Class:     com_inventale_coregistration_survey_providers_fm_XLearnProvider
  * Method:    predict
- * Signature: (Ljava/lang/String;[I[I[IILjava/lang/String;)[Lcom/inventale/coregistration/survey/providers/fm/PredictionResult;
+ * Signature: (Ljava/lang/String;[I[I[IILjava/lang/String;Z)[Lcom/inventale/coregistration/survey/providers/fm/PredictionResult;
  */
 JNIEXPORT jobjectArray JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict
-        (JNIEnv *, jobject, jstring, jintArray, jintArray, jintArray, jint, jstring);
+        (JNIEnv *, jobject, jstring, jintArray, jintArray, jintArray, jint, jstring, jboolean);
 
 #ifdef __cplusplus
 }
