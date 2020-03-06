@@ -9,19 +9,35 @@ extern "C" {
 #endif
 /*
  * Class:     com_inventale_coregistration_survey_providers_fm_XLearnProvider
+ * Method:    init
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_init
+        (JNIEnv *, jobject, jstring, jstring, jboolean);
+
+/*
+ * Class:     com_inventale_coregistration_survey_providers_fm_XLearnProvider
+ * Method:    predict
+ * Signature: ([I[I[IIZ)[Lcom/inventale/coregistration/survey/providers/fm/PredictionResult;
+ */
+JNIEXPORT jobjectArray JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict
+        (JNIEnv *, jobject, jintArray, jintArray, jintArray, jint);
+
+/*
+ * Class:     com_inventale_coregistration_survey_providers_fm_XLearnProvider
+ * Method:    cleanup
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_dispose
+        (JNIEnv *, jobject);
+
+/*
+ * Class:     com_inventale_coregistration_survey_providers_fm_XLearnProvider
  * Method:    run
  * Signature: ([Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_run
         (JNIEnv *, jobject, jobjectArray);
-
-/*
- * Class:     com_inventale_coregistration_survey_providers_fm_XLearnProvider
- * Method:    predict
- * Signature: (Ljava/lang/String;[I[I[IILjava/lang/String;Z)[Lcom/inventale/coregistration/survey/providers/fm/PredictionResult;
- */
-JNIEXPORT jobjectArray JNICALL Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict
-        (JNIEnv *, jobject, jstring, jintArray, jintArray, jintArray, jint, jstring, jboolean);
 
 #ifdef __cplusplus
 }

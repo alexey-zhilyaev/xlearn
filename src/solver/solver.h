@@ -74,6 +74,9 @@ class Solver {
   // used for python API.
   void Initialize(HyperParam& hyper_param);
 
+  // Initialize dataset for prediction
+  void InitializeDataset(xLearn::DMatrix * matrix);
+
   // Start a training task or start an inference task.
   void StartWork();
 

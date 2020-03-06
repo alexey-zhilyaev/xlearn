@@ -3,9 +3,12 @@
 #include "src/solver/solver.h"
 #include "src/base/timer.h"
 
+const char *const INSTANCE_POINTER_FIELD = "xlearnInstancePointer";
 const char *const RESULT_JAVA_CLASS = "com/inventale/coregistration/survey/providers/fm/PredictionResult";
+bool isQuiet = false;
 
 void Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_run(JNIEnv *env, jobject object, jobjectArray argsArray) {
+    if (isQuiet) std::cout.setstate(std::ios_base::failbit);
     Timer timer;
     timer.tic();
     int argsCount = env->GetArrayLength(argsArray);
@@ -21,29 +24,65 @@ void Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_run(JN
     bool isTraining = strcmp(argv[0], "train") == 0;
     xLearn::Solver solver;
     if (isTraining) {
-        printf("Start training\n");
         solver.SetTrain();
     } else {
-        printf("Start prediction\n");
         solver.SetPredict();
     }
     solver.Initialize(argsCount, argv);
     solver.StartWork();
     solver.Clear();
     Color::print_info(StringPrintf("Total time cost: %.6f (sec)", timer.toc()), NOT_IMPORTANT_MSG);
+    if (isQuiet) std::cout.clear();
 }
 
 bool sortDescBySecond(const std::pair<int,float > &a, const std::pair<int,float> &b){
     return (a.second > b.second);
 }
 
+jfieldID getInstancePointerFieldId(JNIEnv * env, jobject obj){
+    static jfieldID ptrFieldId = 0;
+    if (!ptrFieldId){
+        jclass clazz = env->GetObjectClass(obj);
+        ptrFieldId = env->GetFieldID(clazz, INSTANCE_POINTER_FIELD, "J");
+        env->DeleteLocalRef(clazz);
+    }
+    return ptrFieldId;
+}
+
+void Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_init(JNIEnv *env, jobject object,
+                                                                               jstring jmodel, jstring joutput,
+                                                                               jboolean jQuiet) {
+    isQuiet = (bool) jQuiet;
+    if (isQuiet) std::cout.setstate(std::ios_base::failbit);
+    Color::print_action("Start Initializing");
+    auto model = env->GetStringUTFChars(jmodel, nullptr);
+    auto output = env->GetStringUTFChars(joutput, nullptr);
+    xLearn::HyperParam param;
+    param.model_file = model;
+    param.output_file = output;
+    param.is_train = false;
+    param.from_file = false;
+    xLearn::DMatrix matrix;
+    param.test_dataset = &matrix;
+    auto solver = new xLearn::Solver();
+    solver->Initialize(param);
+    env->SetLongField(object, getInstancePointerFieldId(env, object), (jlong) solver);
+    Color::print_action("Finish Initializing");
+    if (isQuiet) std::cout.clear();
+}
+
+void Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_dispose(JNIEnv *env, jobject object) {
+    if (isQuiet) std::cout.setstate(std::ios_base::failbit);
+    auto solver = (xLearn::Solver*) env->GetLongField(object, getInstancePointerFieldId(env, object));
+    solver->Clear();
+    delete solver;
+    if (isQuiet) std::cout.clear();
+}
+
 JNIEXPORT jobjectArray JNICALL
 Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict(JNIEnv *env, jobject object,
-                                                                             jstring jmodel,
                                                                              jintArray tasks, jintArray keys,
-                                                                             jintArray values, jint jtopSize,
-                                                                             jstring joutput,
-                                                                             jboolean isQuiet) {
+                                                                             jintArray values, jint jtopSize) {
     if (isQuiet) std::cout.setstate(std::ios_base::failbit);
     Timer timer;
     timer.tic();
@@ -55,9 +94,6 @@ Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict(JNI
     jsize facts_size = (env)->GetArrayLength(keys);
     Color::print_info(StringPrintf("Tasks amount: %i", tasks_size));
     Color::print_info(StringPrintf("Knowledge amount: %i", facts_size));
-
-    auto model = env->GetStringUTFChars(jmodel, nullptr);
-    auto output = env->GetStringUTFChars(joutput, nullptr);
 
     Color::print_action("Generating prediction matrix ...");
     xLearn::DMatrix matrix;
@@ -76,18 +112,11 @@ Java_com_inventale_coregistration_survey_providers_fm_XLearnProvider_predict(JNI
         row_id++;
     }
     Color::print_info(StringPrintf("Prediction matrix was generated"));
-    xLearn::HyperParam param;
-    param.model_file = model;
-    param.output_file = output;
-    param.is_train = false;
-    param.from_file = false;
-    param.test_dataset = &matrix;
-
-    xLearn::Solver solver;
-    solver.Initialize(param);
-    solver.StartWork();
-    std::vector<float> result = solver.GetResult();
-    solver.Clear();
+    long solverPointer = env->GetLongField(object, getInstancePointerFieldId(env, object));
+    auto solver = reinterpret_cast<xLearn::Solver*>(solverPointer);
+    solver->InitializeDataset(&matrix);
+    solver->StartWork();
+    std::vector<float> result = solver->GetResult();
     Color::print_info(StringPrintf("Total predict time cost: %.6f (sec)", timer.toc()), false);
 
     // Selection of best tasks

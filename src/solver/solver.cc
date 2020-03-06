@@ -149,6 +149,16 @@ void Solver::Initialize(HyperParam& hyper_param) {
   }
 }
 
+void Solver::InitializeDataset(xLearn::DMatrix * matrix) {
+  reader_[0]->SetBlockSize(hyper_param_.block_size);
+  reader_[0]->Initialize(matrix);
+  reader_[0]->SetShuffle(false);
+  if (reader_[0] == nullptr) {
+    Color::print_info(StringPrintf("Cannot load dataset"));
+    exit(0);
+  }
+}
+
 // Check and parse command line arguments
 void Solver::checker(int argc, char* argv[]) {
   try {
