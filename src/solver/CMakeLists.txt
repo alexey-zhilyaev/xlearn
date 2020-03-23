@@ -6,7 +6,7 @@ endif ()
 
 # Build static library
 set(STA_DEPS reader loss score data base)
-add_library(solver SHARED checker.cc trainer.cc inference.cc solver.cc coregistration.cc)
+add_library(solver SHARED checker.cc trainer.cc inference.cc solver.cc coregistration.cc coregistration_predictor.cc coregistration_trainer.cc)
 if (NOT WIN32)
     target_link_libraries(solver ${STA_DEPS})
 else (WIN32)
