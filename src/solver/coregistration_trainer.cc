@@ -25,6 +25,6 @@ void Java_com_inventale_coregistration_survey_providers_fm_XlearnTrainer_train(J
     solver.Initialize(argsCount, argv);
     solver.StartWork();
     solver.Clear();
-    Color::print_info(StringPrintf("Total time cost: %.6f (sec)", timer.toc()), NOT_IMPORTANT_MSG);
+    Color::print_info(StringPrintf("Total time cost: %.3f (sec)", timer.toc()), NOT_IMPORTANT_MSG);
     if (isQuiet) std::cout.clear();
 }

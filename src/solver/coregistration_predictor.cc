@@ -22,7 +22,7 @@ jfieldID getInstancePointerFieldId(JNIEnv * env, jobject obj){
     return ptrFieldId;
 }
 
-void Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_init(JNIEnv *env, jobject object, jstring jmodel) {
+void Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_init(JNIEnv *env, jobject object, jstring jmodel, jint threadsCount) {
     isQuiet = isQuietCheck(env, object);
     if (isQuiet) std::cout.setstate(std::ios_base::failbit);
     Color::print_action("Start Initializing");
@@ -31,6 +31,8 @@ void Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_init(
     param.model_file = model;
     param.is_train = false;
     param.from_file = false;
+    param.res_out = false;
+    param.thread_number = threadsCount;
     xLearn::DMatrix matrix;
     param.test_dataset = &matrix;
     auto solver = new xLearn::Solver();
@@ -86,7 +88,7 @@ Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_predict(JN
     solver->InitializeDataset(&matrix);
     solver->StartWork();
     std::vector<float> result = solver->GetResult();
-    Color::print_info(StringPrintf("Total predict time cost: %.6f (sec)", timer.toc()), false);
+    Color::print_info(StringPrintf("Total predict time cost: %.3f (sec)", timer.toc()), false);
 
     // Selection of best tasks
     std::vector<std::pair<int, float> > taskToResult;

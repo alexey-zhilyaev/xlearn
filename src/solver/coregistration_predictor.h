@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_init
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jobject, jstring, jint);
 
 /*
  * Class:     com_inventale_coregistration_survey_providers_fm_XlearnPredictor

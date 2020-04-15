@@ -124,11 +124,7 @@ static const uint32 kChunkSize = 1000 * 1024; // 1000 KB
 
 // Check wether the file exists.
 inline bool FileExist(const char *filename) {
-  if (access(filename, F_OK) != -1) {
-    return true;
-  }
-  LOG(WARNING) << "File: " << filename << " doesn't exists.";
-  return false;
+    return access(filename, F_OK) != -1;
 }
 
 // Open file using fopen() and return the file pointer.
