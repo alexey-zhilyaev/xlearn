@@ -39,22 +39,18 @@ void Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_init(
     solver->Initialize(param);
     env->SetLongField(object, getInstancePointerFieldId(env, object), (jlong) solver);
     Color::print_action("Finish Initializing");
-    if (isQuiet) std::cout.clear();
 }
 
 void Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_dispose(JNIEnv *env, jobject object) {
-    if (isQuiet) std::cout.setstate(std::ios_base::failbit);
     auto solver = (xLearn::Solver*) env->GetLongField(object, getInstancePointerFieldId(env, object));
     solver->Clear();
     delete solver;
-    if (isQuiet) std::cout.clear();
 }
 
 JNIEXPORT jobjectArray JNICALL
 Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_predict(JNIEnv *env, jobject object,
                                                                              jintArray tasks, jintArray keys,
                                                                              jintArray values, jint jtopSize) {
-    if (isQuiet) std::cout.setstate(std::ios_base::failbit);
     Timer timer;
     timer.tic();
     Color::print_action("Reading input parameters ...");
@@ -111,6 +107,5 @@ Java_com_inventale_coregistration_survey_providers_fm_XlearnPredictor_predict(JN
     (env)->ReleaseIntArrayElements(tasks, taskArray, 0);
     (env)->ReleaseIntArrayElements(keys, keysArray, 0);
     (env)->ReleaseIntArrayElements(values, valuesArray, 0);
-    if (isQuiet) std::cout.clear();
     return out;
 }
