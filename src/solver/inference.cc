@@ -32,7 +32,7 @@ namespace xLearn {
 void Predictor::Predict() {
   if (res_out_)
     std::ofstream o_file(out_file_);
-  static std::vector<real_t> out;
+  std::vector<real_t> out;
   DMatrix* matrix = nullptr;
   reader_->Reset();
   loss_->Reset();
