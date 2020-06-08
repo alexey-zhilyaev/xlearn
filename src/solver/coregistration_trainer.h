@@ -15,6 +15,17 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_inventale_coregistration_survey_providers_fm_XlearnTrainer_train
   (JNIEnv *, jobject, jobjectArray);
 
+/*
+ * Class:     com_inventale_coregistration_survey_providers_fm_XlearnTrainer
+ * Method:    predict
+ * Signature: ([Ljava/lang/String;)[D
+ */
+JNIEXPORT jdoubleArray JNICALL Java_com_inventale_coregistration_survey_providers_fm_XlearnTrainer_test
+        (JNIEnv *, jobject, jobjectArray);
+
+
+char** getArgs(JNIEnv *, jobjectArray);
+
 #ifdef __cplusplus
 }
 #endif

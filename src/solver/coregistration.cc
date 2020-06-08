@@ -1,6 +1,5 @@
 
 #include <jni.h>
-#include "src/base/timer.h"
 
 const char *const IS_QUIET_FIELD = "isQuiet";
 
